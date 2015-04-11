@@ -37,7 +37,7 @@ io.on('connection', function (socket) {
 });
 
 
-stream.on('fun', function(t){
+stream.on('tweet', function(t){
     console.log(t.text);
 
     // update the original object
