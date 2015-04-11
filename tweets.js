@@ -46,7 +46,6 @@ var urls = [
 
 var url = require('url');
 
-
 var urls_to_track = urls.map(function(link) {
     var parsed_url = url.parse(link)
     if ( parsed_url.host) {
@@ -67,7 +66,11 @@ console.log(urls_to_track);
 stream.track(urls_to_track);
 
 stream.on('tweet', function(t){
-  console.log(t.text)
+    var urls = [];
+    t.entities.urls.forEach(function(url) {
+        urls.push(url.display_url);
+    });
+    console.log(urls)
 });
 
 stream.on('error', function (err) {
