@@ -57,9 +57,11 @@ var urls_to_track = urls.map(function(obj) {
         trimmed_url = 'news.ycombinator.com/' + obj.href
     }
     return trimmed_url
-}).join(',')
-
-console.log(urls_to_track);
+})
+.filter(function(url) {
+    return url.length < 60
+})
+.join(',')
 
 stream.track(urls_to_track);
 
