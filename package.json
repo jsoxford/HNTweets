@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/jsoxford/HNTweets",
   "dependencies": {
-    "tweets": "0.0.6",
-    "dotenv": "~1.1.0"
+    "dotenv": "~1.1.0",
+    "node-tweet-stream": "^1.6.0",
+    "tweets": "0.0.6"
   }
 }
