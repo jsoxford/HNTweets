@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HNTweets</title>
+  <style type="text/css">
+    body{font-family: sans-serif;}
+    .count{
+      color:red;
+    }
+    .entry{
+      border-bottom:1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>HNTweets</h1>
+
+  <ul id="content"></ul>
+
+
+  <script id="entry-template" type="text/x-handlebars-template">
+    {{#each items}}
+      <div class="entry">
+        <h1>{{what}} <span class="count">{{count}}</count></h1>
+      </div>
+    {{/each}}
+  </script>
+
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="/handlebars-v3.0.1.js"></script>
+  <script type="text/javascript" src="/jquery-1.11.2.min.js"></script>
+
+  <script type="text/javascript">
+    var source   = $("#entry-template").html();
+    var template = Handlebars.compile(source);
+
+    var socket = io.connect(window.location.origin);
+    socket.on('fun', function (items) {
+      var html = template({items:items});
+      $('#content').html(html);
+    });
+  </script>
+</body>
+</html>
