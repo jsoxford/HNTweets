@@ -1,17 +1,8 @@
 [
-    {
-        "what": "pizza"
-    },
-    {
-        "what": "beer"
-    },
-    {
-        "what": "cocktail"
-    },
-    {
-        "what": "burger"
-    },
-    {
-        "what": "wine"
-    }
+    { "what": "pizza" },
+    { "what": "beer" },
+    { "what": "cocktail" },
+    { "what": "burger" },
+    { "what": "wine" },
+    { "what": "coffee" }
 ]
