@@ -13,7 +13,7 @@ var stream = new Twitter({
 
 var urls = [
     'http://www.filfre.net/2015/04/the-68000-wars-part-3-we-made-amiga-they-fucked-it-up/',
-    'http://thisisvoid.org/',
+    'http://thisisvoid.org',
     'https://dncmagazine.blob.core.windows.net/downloads/AngularCheatSheet-DNCMagazine.pdf',
     'https://docs.google.com/document/d/1QZxArgMwidgCrAbuSikcB2iBxkffH6w0YB0C1qCsuH0',
     'http://utcc.utoronto.ca/~cks/space/blog/linux/SystemdAndSyslog',
@@ -51,7 +51,7 @@ var urls_to_track = urls.map(function(link) {
     var parsed_url = url.parse(link)
     if ( parsed_url.host) {
         var hostname = parsed_url.hostname.replace('www.', '')
-        var trimmed_url = hostname + parsed_url.path
+        var trimmed_url = hostname + parsed_url.path.replace(new RegExp('\/$', 'g'), '')
     }
     else {
         trimmed_url = 'news.ycombinator.com/' + link
