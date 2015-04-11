@@ -4,6 +4,12 @@
   <title>HNTweets</title>
   <style type="text/css">
     body{font-family: sans-serif;}
+    .count{
+      color:red;
+    }
+    .entry{
+      border-bottom:1px solid #ccc;
+    }
   </style>
 </head>
 <body>
@@ -15,8 +21,8 @@
   <script id="entry-template" type="text/x-handlebars-template">
     {{#each items}}
       <div class="entry">
-        <h1>{{text}}</h1>
-        <h2>{{href}} - {{count}}</h2>
+        <h1>{{text}}  <span class="count">{{count}}</count></h1>
+        <h2>{{href}}</h2>
       </div>
     {{/each}}
   </script>
