@@ -1,4 +1,5 @@
 require('dotenv').load();
+var fs = require('fs');
 
 var Twitter = require('node-tweet-stream')
 
@@ -11,38 +12,15 @@ var stream = new Twitter({
 });
 
 
-var urls = [
-    'http://www.filfre.net/2015/04/the-68000-wars-part-3-we-made-amiga-they-fucked-it-up/',
-    'http://thisisvoid.org',
-    'https://dncmagazine.blob.core.windows.net/downloads/AngularCheatSheet-DNCMagazine.pdf',
-    'https://docs.google.com/document/d/1QZxArgMwidgCrAbuSikcB2iBxkffH6w0YB0C1qCsuH0',
-    'http://utcc.utoronto.ca/~cks/space/blog/linux/SystemdAndSyslog',
-    'http://www.nytimes.com/2015/04/08/opinion/yes-we-were-warned-about-ebola.html',
-    'http://www.devttys0.com/2015/04/hacking-the-d-link-dir-890l/',
-    'https://www.eff.org/press/releases/eff-busts-podcasting-patent-invalidating-key-claims-patent-office',
-    'http://blog.rust-lang.org/2015/04/10/Fearless-Concurrency.html',
-    'https://code.facebook.com/posts/1639473982937255/updating-our-open-source-patent-grant/',
-    'http://quantombone.blogspot.com/2015/04/deep-learning-vs-probabilistic.html',
-    'https://mozilla.github.io/server-side-tls/ssl-config-generator/?1',
-    'https://github.com/dullgiulio/perso/releases/tag/v0.1',
-    'http://blog.easydns.org/2015/04/10/why-we-will-not-be-registering-easydns-sucks/',
-    'item?id=9356332',
-    'http://jdh.hamkins.org/math-for-eight-year-olds',
-    'https://blogs.janestreet.com/building-a-lower-latency-gc/',
-    'http://educationware.net/introduction-to-linux-free-course-from-the-linux-foundation/',
-    'http://blog.jgc.org/2015/04/the-one-line-you-should-add-to-every.html',
-    'http://www.reenigne.org/blog/1k-colours-on-cga-how-its-done/',
-    'https://tibastral.github.io/markdownify/',
-    'http://www.reenigne.org/blog/8088-pc-speaker-mod-player-how-its-done/',
-    'item?id=9358843',
-    'https://gist.github.com/ImJasonH/c00cdd7aece6945fb8ea',
-    'http://home.web.cern.ch/about/updates/2015/04/first-successful-beam-record-energy-65-tev',
-    'http://blog.jetbrains.com/dotnet/2015/04/10/introducing-resharper-cpp/',
-    'https://in.news.yahoo.com/the-slave-ship-that-ran-from-kerala-to-new-orleans-085329807.html',
-    'http://www.newyorker.com/magazine/2005/09/19/the-lost-city-of-z',
-    'https://github.com/kgaughan/memoize.py',
-    'http://sangaline.com/blog/optimizing_for_swype/'
-];
+
+var data = JSON.parse(fs.readFileSync('links.json'));
+
+data.forEach(function(item){
+    item.count = 0;
+});
+
+
+var urls = data.map(function(obj){ return obj.href });
 
 var url = require('url');
 
@@ -65,14 +43,52 @@ var urls_to_track = urls.map(function(link) {
 console.log(urls_to_track);
 stream.track(urls_to_track);
 
+
+
+
+var express = require('express');
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+app.use(express.static(__dirname + '/public'));
+
+
+io.on('connection', function (socket) {
+  // send the current content
+  socket.emit('urls', data);
+});
+
+
+
+
 stream.on('tweet', function(t){
-    var urls = [];
-    t.entities.urls.forEach(function(url) {
-        urls.push(url.display_url);
+    var tweet_urls = (t.entities.urls||[]).map(function(url){
+        return url.display_url
     });
-    console.log(urls)
+
+    console.log(t.text, tweet_urls);
+
+    // update the original object
+    data.filter(function(item){
+        return tweet_urls.filter(function(display_url){
+            return item.href.match(display_url)
+        }).length
+    }).forEach(function(item){
+        item.count = (item.count||0) + 1;
+    });
+
+
+    io.emit('urls', data);
+
 });
 
 stream.on('error', function (err) {
   console.log('Oh no')
 })
+
+
+
+
+http.listen(3000);
+console.log("http://localhost:3000")
